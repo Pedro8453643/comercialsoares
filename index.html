@@ -1044,11 +1044,24 @@ function atualizarListaPedidos() {
         <button class="btn btn-secondary btn-sm" onclick="baixarPDF('${pid}')">
           <i class="fas fa-download"></i> Baixar PDF
         </button>
+        <button class="btn btn-danger btn-sm" onclick="excluirPedido('${pid}')">
+          <i class="fas fa-trash"></i> Excluir
+        </button>
       </div>
     `;
     
     container.appendChild(card);
   });
+}
+
+// Função para excluir um pedido
+function excluirPedido(pid) {
+  if (confirm('Tem certeza que deseja excluir este pedido? Esta ação não pode ser desfeita.')) {
+    delete pedidos[pid];
+    salvar();
+    atualizarListaPedidos();
+    mostrarNotificacao('Pedido excluído com sucesso!');
+  }
 }
 
 // Função para visualizar detalhes do pedido (MOBILE-FRIENDLY)
@@ -1110,6 +1123,9 @@ function visualizarPedido(pid) {
     <div class="text-right mt-2">
       <button class="btn btn-secondary" onclick="baixarPDF('${pid}')">
         <i class="fas fa-download"></i> Baixar PDF
+      </button>
+      <button class="btn btn-danger" onclick="excluirPedido('${pid}')">
+        <i class="fas fa-trash"></i> Excluir Pedido
       </button>
     </div>
   `;
