@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Pedidos</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --primary: #4A95C8; /* Azul profissional */
+  --primary-dark: #3A7AA3;
+  --secondary: #6B8E23; /* Verde oliva corporativo */
+  --accent: #FF6B6B; /* Coral vibrante mas controlado */
+  --neutral: #F8F9FA; /* Branco neutro */
+  --text: #2D3748; /* Cinza azulado escuro */
+  --success: #48BB78; /* Verde corporativo */
+  --warning: #ED8936; /* Laranja profissional */
+  --danger: #E53E3E; /* Vermelho corporativo */
+  --border: #E2E8F0; /* Cinza muito claro */
+  --card-bg: #FFFFFF;
+  --shadow: rgba(74, 149, 200, 0.15);
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8fafc;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Tela de Login */
+#login-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.5s ease;
+}
+
+.login-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-container h2 {
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.login-form .form-group {
+  margin-bottom: 1.2rem;
+  text-align: left;
+}
+
+.login-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.login-error {
+  color: var(--danger);
+  margin-top: 0.5rem;
+  display: none;
+}
+
+/* Header */
+header {
+  background: var(--primary);
+  color: white;
+  padding: 1rem 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tab-btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.tab-btn.active {
+  background: white;
+  color: var(--primary);
+}
+
+/* Main Content */
+main {
+  padding: 2rem 0;
+}
+
+.tab {
+  display: none;
+  background: white;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin-top: 1.5rem;
+}
+
+.tab.active {
+  display: block;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+input, select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+/* Button Styles */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-secondary {
+  background: var(--secondary);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #0da271;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+.btn-warning {
+  background: var(--warning);
+  color: white;
+}
+
+.btn-warning:hover {
+  background: #d97706;
+}
+
+/* Table Styles */
+.table-container {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+th, td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  background: #f8fafc;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+tr:hover {
+  background: #f1f5f9;
+}
+
+/* Card Styles */
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid var(--primary);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card-title {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Grid System */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -10px;
+}
+
+.col {
+  flex: 1;
+  padding: 0 10px;
+  min-width: 300px;
+  margin-bottom: 20px;
+}
+
+/* Alert Styles */
+.alert {
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.alert-success {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.alert-error {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* Badge */
+.badge {
+  display: inline-block;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+}
+
+.badge-success {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.badge-warning {
+  background: #fffbeb;
+  color: #92400e;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  nav {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .tab-btn {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .col {
+    flex: 100%;
+  }
+}
+
+/* Utilities */
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-1 {
+  margin-top: 0.5rem;
+}
+
+.mt-2 {
+  margin-top: 1rem;
+}
+
+.mt-3 {
+  margin-top: 1.5rem;
+}
+
+.mb-1 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-2 {
+  margin-bottom: 1rem;
+}
+
+.mb-3 {
+  margin-bottom: 1.5rem;
+}
+
+.hidden {
+  display: none;
+}
+</style>
+</head>
+<body>
+<!-- Tela de Login -->
+<div id="login-screen">
+  <div class="login-container">
+    <h2><i class="fas fa-lock"></i> Acesso Restrito</h2>
+    <form class="login-form" onsubmit="return fazerLogin(event)">
+      <div class="form-group">
+        <label for="codigoAcesso">Código de Acesso</label>
+        <input type="password" id="codigoAcesso" placeholder="Digite o código de acesso" required>
+        <div class="login-error" id="loginError">
+          <i class="fas fa-exclamation-circle"></i> Código de acesso incorreto
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-sign-in-alt"></i> Entrar
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Conteúdo Principal (inicialmente oculto) -->
+<div id="main-content" style="display: none;">
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <h1><i class="fas fa-store"></i> Comercial Soares</h1>
+        <nav>
+          <button class="tab-btn active" data-tab="criar"><i class="fas fa-plus-circle"></i> Criar Pedido</button>
+          <button class="tab-btn" data-tab="ver"><i class="fas fa-list"></i> Ver Pedidos</button>
+          <button class="tab-btn" data-tab="reabrir"><i class="fas fa-undo"></i> Reabrir Pedidos</button>
+          <button class="tab-btn" onclick="sair()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Criar Pedido -->
+    <div id="criar" class="tab active">
+      <h2><i class="fas fa-plus-circle"></i> Criar Pedido</h2>
+      
+      <div class="form-group">
+        <label for="clienteNome">Nome do Cliente</label>
+        <input type="text" id="clienteNome" placeholder="Digite o nome do cliente">
+      </div>
+      
+      <button class="btn btn-primary" onclick="iniciarPedido()">
+        <i class="fas fa-play"></i> Iniciar Pedido
+      </button>
+
+      <div id="pedidoSection" class="hidden mt-3">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title" id="pedidoCliente"></h3>
+            <span class="badge badge-warning">Em Andamento</span>
+          </div>
+          
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Produto</th>
+                  <th>Quantidade</th>
+                  <th>Preço Unit.</th>
+                  <th>Total</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody id="itensPedido">
+                <tr>
+                  <td colspan="6" class="text-center">Nenhum item adicionado ainda</td>
+                </tr>
+              </tbody>
+              <tfoot id="pedidoTotal">
+                <tr>
+                  <td colspan="4" class="text-right"><strong>Total Geral:</strong></td>
+                  <td><strong>R$ 0,00</strong></td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          
+          <div class="mt-3">
+            <h3><i class="fas fa-plus"></i> Adicionar Item</h3>
+            <div class="row">
+              <div class="col">
+                <div class="form-group">
+                  <label for="produto">Produto</label>
+                  <input type="text" id="produto" placeholder="Nome do produto">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label for="quantidade">Quantidade</label>
+                  <input type="number" id="quantidade" value="1" min="1">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label for="preco">Preço Unitário (R$)</label>
+                  <input type="number" id="preco" value="0" step="0.01" min="0">
+                </div>
+              </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="adicionarItem()">
+              <i class="fas fa-plus"></i> Adicionar Item
+            </button>
+          </div>
+          
+          <div class="mt-3 text-right">
+            <button class="btn btn-secondary" onclick="finalizarPedido()">
+              <i class="fas fa-check"></i> Finalizar Pedido
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ver Pedidos -->
+    <div id="ver" class="tab">
+      <h2><i class="fas fa-list"></i> Pedidos Finalizados</h2>
+      <div id="listaPedidos" class="mt-2">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle"></i> Carregando pedidos...
+        </div>
+      </div>
+    </div>
+
+    <!-- Reabrir Pedidos -->
+    <div id="reabrir" class="tab">
+      <h2><i class="fas fa-undo"></i> Reabrir Pedidos</h2>
+      
+      <div class="form-group">
+        <label for="selectPedido">Selecione um pedido para reabrir</label>
+        <select id="selectPedido" onchange="abrirPedidoReaberto()">
+          <option value="">Selecione um pedido</option>
+        </select>
+      </div>
+      
+      <div id="detalhesReaberto" class="mt-3"></div>
+    </div>
+  </main>
+
+  <!-- Modal para visualizar pedido -->
+  <div id="modalPedido" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 2rem; border-radius: 10px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 id="modalTitle">Detalhes do Pedido</h3>
+        <button onclick="fecharModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script>
+// Inicializar jsPDF
+const { jsPDF } = window.jspdf;
+
+// Variáveis globais
+let pedidos = JSON.parse(localStorage.getItem('pedidos') || '{}');
+let pedidoAtivo = null;
+const SENHA_CORRETA = "S600ad"; // Senha definida
+
+// Verificar se o usuário já está logado
+document.addEventListener('DOMContentLoaded', function() {
+  const estaLogado = localStorage.getItem('logado') === 'true';
+  
+  if (estaLogado) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    inicializarSistema();
+  }
+});
+
+// Função para fazer login
+function fazerLogin(event) {
+  event.preventDefault();
+  const codigo = document.getElementById('codigoAcesso').value;
+  const erroLogin = document.getElementById('loginError');
+  
+  if (codigo === SENHA_CORRETA) {
+    // Login bem-sucedido
+    localStorage.setItem('logado', 'true');
+    document.getElementById('login-screen').style.opacity = '0';
+    
+    setTimeout(() => {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+      inicializarSistema();
+    }, 500);
+  } else {
+    // Login falhou
+    erroLogin.style.display = 'block';
+    setTimeout(() => {
+      erroLogin.style.display = 'none';
+    }, 3000);
+  }
+}
+
+// Função para sair do sistema
+function sair() {
+  localStorage.removeItem('logado');
+  document.getElementById('main-content').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-screen').style.opacity = '1';
+  document.getElementById('codigoAcesso').value = '';
+}
+
+// Inicializar o sistema após login
+function inicializarSistema() {
+  atualizarListaPedidos();
+  atualizarSelectPedido();
+  
+  // Configurar abas
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    if (!btn.onclick) { // Evitar duplicar eventos
+      btn.addEventListener('click', () => {
+        if (btn.dataset.tab) {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          
+          document.getElementById(btn.dataset.tab).classList.add('active');
+          btn.classList.add('active');
+          
+          // Atualizar as listas quando mudar para as abas correspondentes
+          if (btn.dataset.tab === 'ver') {
+            atualizarListaPedidos();
+          } else if (btn.dataset.tab === 'reabrir') {
+            atualizarSelectPedido();
+          }
+        }
+      });
+    }
+  });
+}
+
+// Função para salvar no localStorage
+function salvar() {
+  localStorage.setItem('pedidos', JSON.stringify(pedidos));
+  atualizarListaPedidos();
+  atualizarSelectPedido();
+}
+
+// Função para mostrar notificação
+function mostrarNotificacao(mensagem, tipo = 'success') {
+  const notification = document.createElement('div');
+  notification.className = `alert alert-${tipo === 'success' ? 'success' : 'error'}`;
+  notification.innerHTML = `
+    <i class="fas ${tipo === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+    ${mensagem}
+  `;
+  
+  document.querySelector('main').prepend(notification);
+  
+  // Remover após 3 segundos
+  setTimeout(() => {
+    notification.remove();
+  }, 3000);
+}
+
+// Função para iniciar um novo pedido
+function iniciarPedido() {
+  const nome = document.getElementById('clienteNome').value.trim();
+  if (!nome) {
+    mostrarNotificacao('Digite o nome do cliente', 'error');
+    return;
+  }
+  
+  const pid = Date.now().toString();
+  pedidos[pid] = { 
+    cliente: nome, 
+    itens: [], 
+    finalizado: false,
+    numero: Object.keys(pedidos).length + 1,
+    data: new Date().toLocaleString('pt-BR')
+  };
+  
+  pedidoAtivo = pid;
+  document.getElementById('pedidoCliente').innerText = `Pedido de: ${nome}`;
+  document.getElementById('pedidoSection').classList.remove('hidden');
+  document.getElementById('clienteNome').value = '';
+  
+  atualizarItens();
+  salvar();
+  mostrarNotificacao('Pedido iniciado com sucesso!');
+}
+
+// Função para atualizar a lista de itens do pedido
+function atualizarItens() {
+  const tbody = document.getElementById('itensPedido');
+  const pedido = pedidos[pedidoAtivo];
+  
+  if (pedido.itens.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="text-center">Nenhum item adicionado ainda</td></tr>';
+    document.getElementById('pedidoTotal').innerHTML = `
+      <tr>
+        <td colspan="4" class="text-right"><strong>Total Geral:</strong></td>
+        <td><strong>R$ 0,00</strong></td>
+        <td></td>
+      </tr>
+    `;
+    return;
+  }
+  
+  tbody.innerHTML = '';
+  let totalGeral = 0;
+  
+  pedido.itens.forEach((item, idx) => {
+    const totalItem = item.quantidade * item.preco;
+    totalGeral += totalItem;
+    
+    tbody.innerHTML += `
+      <tr>
+        <td>${idx + 1}</td>
+        <td>${item.produto}</td>
+        <td>${item.quantidade}</td>
+        <td>R$ ${item.preco.toFixed(2)}</td>
+        <td>R$ ${totalItem.toFixed(2)}</td>
+        <td>
+          <button class="btn btn-danger" onclick="removerItem(${idx})">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+  
+  document.getElementById('pedidoTotal').innerHTML = `
+    <tr>
+      <td colspan="4" class="text-right"><strong>Total Geral:</strong></td>
+      <td><strong>R$ ${totalGeral.toFixed(2)}</strong></td>
+      <td></td>
+    </tr>
+  `;
+}
+
+// Função para adicionar item ao pedido
+function adicionarItem() {
+  if (!pedidoAtivo) {
+    mostrarNotificacao('Inicie um pedido primeiro', 'error');
+    return;
+  }
+  
+  const produto = document.getElementById('produto').value.trim();
+  const quantidade = parseInt(document.getElementById('quantidade').value);
+  const preco = parseFloat(document.getElementById('preco').value);
+  
+  if (!produto || quantidade <= 0 || preco < 0) {
+    mostrarNotificacao('Preencha todos os campos corretamente', 'error');
+    return;
+  }
+  
+  pedidos[pedidoAtivo].itens.push({ produto, quantidade, preco });
+  
+  document.getElementById('produto').value = '';
+  document.getElementById('quantidade').value = 1;
+  document.getElementById('preco').value = 0;
+  
+  atualizarItens();
+  salvar();
+  mostrarNotificacao('Item adicionado com sucesso!');
+}
+
+// Função para remover item do pedido
+function removerItem(idx) {
+  pedidos[pedidoAtivo].itens.splice(idx, 1);
+  atualizarItens();
+  salvar();
+  mostrarNotificacao('Item removido com sucesso!');
+}
+
+// Função para finalizar o pedido
+function finalizarPedido() {
+  if (pedidos[pedidoAtivo].itens.length === 0) {
+    mostrarNotificacao('Não é possível finalizar pedido vazio', 'error');
+    return;
+  }
+  
+  pedidos[pedidoAtivo].finalizado = true;
+  gerarPDF(pedidos[pedidoAtivo]);
+  
+  mostrarNotificacao('Pedido finalizado com sucesso! PDF gerado.');
+  
+  pedidoAtivo = null;
+  document.getElementById('pedidoSection').classList.add('hidden');
+  salvar();
+}
+
+// Função para atualizar a lista de pedidos na aba "Ver Pedidos"
+function atualizarListaPedidos() {
+  const container = document.getElementById('listaPedidos');
+  const pedidosFinalizados = Object.entries(pedidos)
+    .filter(([_, pedido]) => pedido.finalizado)
+    .sort((a, b) => b[1].numero - a[1].numero);
+  
+  if (pedidosFinalizados.length === 0) {
+    container.innerHTML = `
+      <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Nenhum pedido finalizado ainda.
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = '';
+  
+  pedidosFinalizados.forEach(([pid, pedido]) => {
+    let totalGeral = 0;
+    pedido.itens.forEach(item => {
+      totalGeral += item.quantidade * item.preco;
+    });
+    
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-header">
+        <h3 class="card-title">Pedido #${pedido.numero} - ${pedido.cliente}</h3>
+        <span class="badge badge-success">Finalizado</span>
+      </div>
+      <p><strong>Data:</strong> ${pedido.data}</p>
+      <p><strong>Total:</strong> R$ ${totalGeral.toFixed(2)}</p>
+      <p><strong>Itens:</strong> ${pedido.itens.length}</p>
+      <div class="card-actions mt-2">
+        <button class="btn btn-primary" onclick="visualizarPedido('${pid}')">
+          <i class="fas fa-eye"></i> Visualizar
+        </button>
+        <button class="btn btn-secondary" onclick="baixarPDF('${pid}')">
+          <i class="fas fa-download"></i> Baixar PDF
+        </button>
+      </div>
+    `;
+    
+    container.appendChild(card);
+  });
+}
+
+// Função para visualizar detalhes do pedido
+function visualizarPedido(pid) {
+  const pedido = pedidos[pid];
+  let totalGeral = 0;
+  
+  let html = `
+    <p><strong>Data:</strong> ${pedido.data}</p>
+    <p><strong>Cliente:</strong> ${pedido.cliente}</p>
+    <div class="table-container mt-2">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Preço Unit.</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+  
+  pedido.itens.forEach((item, idx) => {
+    const totalItem = item.quantidade * item.preco;
+    totalGeral += totalItem;
+    
+    html += `
+      <tr>
+        <td>${idx + 1}</td>
+        <td>${item.produto}</td>
+        <td>${item.quantidade}</td>
+        <td>R$ ${item.preco.toFixed(2)}</td>
+        <td>R$ ${totalItem.toFixed(2)}</td>
+      </tr>
+    `;
+  });
+  
+  html += `
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" class="text-right"><strong>Total Geral:</strong></td>
+            <td><strong>R$ ${totalGeral.toFixed(2)}</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="text-right mt-2">
+      <button class="btn btn-secondary" onclick="baixarPDF('${pid}')">
+        <i class="fas fa-download"></i> Baixar PDF
+      </button>
+    </div>
+  `;
+  
+  document.getElementById('modalTitle').innerText = `Pedido #${pedido.numero} - ${pedido.cliente}`;
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalPedido').style.display = 'flex';
+}
+
+// Função para fechar o modal
+function fecharModal() {
+  document.getElementById('modalPedido').style.display = 'none';
+}
+
+// Função para atualizar o select de pedidos na aba "Reabrir Pedidos"
+function atualizarSelectPedido() {
+  const select = document.getElementById('selectPedido');
+  const pedidosFinalizados = Object.entries(pedidos)
+    .filter(([_, pedido]) => pedido.finalizado)
+    .sort((a, b) => b[1].numero - a[1].numero);
+  
+  select.innerHTML = '<option value="">Selecione um pedido</option>';
+  
+  pedidosFinalizados.forEach(([pid, pedido]) => {
+    select.innerHTML += `<option value="${pid}">Pedido #${pedido.numero} - ${pedido.cliente}</option>`;
+  });
+  
+  document.getElementById('detalhesReaberto').innerHTML = '';
+}
+
+// Função para abrir pedido reaberto
+function abrirPedidoReaberto() {
+  const pid = document.getElementById('selectPedido').value;
+  if (!pid) return;
+  
+  // Marcar o pedido como não finalizado
+  pedidos[pid].finalizado = false;
+  pedidoAtivo = pid;
+  
+  // Mudar para a aba de Criar Pedido
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  
+  document.getElementById('criar').classList.add('active');
+  document.querySelector('[data-tab="criar"]').classList.add('active');
+  
+  // Preencher os dados do pedido reaberto na aba de criação
+  document.getElementById('pedidoCliente').innerText = `Pedido de: ${pedidos[pid].cliente}`;
+  document.getElementById('pedidoSection').classList.remove('hidden');
+  
+  atualizarItens();
+  salvar();
+  mostrarNotificacao('Pedido reaberto com sucesso!');
+}
+
+// Função para atualizar itens do pedido reaberto
+function atualizarItensReaberto() {
+  const tbody = document.getElementById('itensReaberto');
+  const pedido = pedidos[pedidoAtivo];
+  
+  if (pedido.itens.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="text-center">Nenhum item adicionado ainda</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = '';
+  let totalGeral = 0;
+  
+  pedido.itens.forEach((item, idx) => {
+    const totalItem = item.quantidade * item.preco;
+    totalGeral += totalItem;
+    
+    tbody.innerHTML += `
+      <tr>
+        <td>${idx + 1}</td>
+        <td>${item.produto}</td>
+        <td>${item.quantidade}</td>
+        <td>R$ ${item.preco.toFixed(2)}</td>
+        <td>R$ ${totalItem.toFixed(2)}</td>
+        <td>
+          <button class="btn btn-danger" onclick="removerItemReaberto(${idx})">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+// Função para adicionar item ao pedido reaberto
+function adicionarItemReaberto() {
+  const produto = document.getElementById('produtoReaberto').value.trim();
+  const quantidade = parseInt(document.getElementById('quantidadeReaberto').value);
+  const preco = parseFloat(document.getElementById('precoReaberto').value);
+  
+  if (!produto || quantidade <= 0 || preco < 0) {
+    mostrarNotificacao('Preencha todos os campos corretamente', 'error');
+    return;
+  }
+  
+  pedidos[pedidoAtivo].itens.push({ produto, quantidade, preco });
+  
+  document.getElementById('produtoReaberto').value = '';
+  document.getElementById('quantidadeReaberto').value = 1;
+  document.getElementById('precoReaberto').value = 0;
+  
+  atualizarItensReaberto();
+  salvar();
+  mostrarNotificacao('Item adicionado com sucesso!');
+}
+
+// Função para remover item do pedido reaberto
+function removerItemReaberto(idx) {
+  pedidos[pedidoAtivo].itens.splice(idx, 1);
+  atualizarItensReaberto();
+  salvar();
+  mostrarNotificacao('Item removido com sucesso!');
+}
+
+// Função para finalizar o pedido reaberto
+function finalizarPedidoReaberto() {
+  if (pedidos[pedidoAtivo].itens.length === 0) {
+    mostrarNotificacao('Não é possível finalizar pedido vazio', 'error');
+    return;
+  }
+  
+  pedidos[pedidoAtivo].finalizado = true;
+  gerarPDF(pedidos[pedidoAtivo]);
+  
+  mostrarNotificacao('Pedido finalizado com sucesso! PDF gerado.');
+  
+  pedidoAtivo = null;
+  document.getElementById('detalhesReaberto').innerHTML = '';
+  salvar();
+}
+
+// Função para gerar PDF
+function gerarPDF(pedido, download = false) {
+  const doc = new jsPDF();
+  
+  // Cabeçalho
+  doc.setFontSize(18);
+  doc.setTextColor(40, 40, 40);
+  doc.text("PEDIDO ELETRÔNICO", 105, 20, { align: "center" });
+  
+  // Informações da empresa
+  doc.setFontSize(12);
+  doc.setTextColor(80, 80, 80);
+  doc.text("DADOS DA EMPRESA", 14, 35);
+  doc.line(14, 37, 196, 37);
+  
+  doc.setFontSize(10);
+  doc.text("Comercial Soares", 14, 45);
+  doc.text("CNPJ: 40.457.273/0001-84", 14, 52);
+  doc.text("Telefone: 34 99985-8000", 105, 45);
+  doc.text("Rua: Getúlio Vargas, Nº 631", 105, 52);
+  
+  // Informações do pedido
+  doc.setFontSize(12);
+  doc.setTextColor(80, 80, 80);
+  doc.text("DADOS DO PEDIDO", 14, 65);
+  doc.line(14, 67, 196, 67);
+  
+  doc.setFontSize(10);
+  doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, 14, 75);
+  doc.text(`Pedido Nº: ${pedido.numero}`, 105, 75);
+  doc.text(`Cliente: ${pedido.cliente}`, 14, 82);
+  
+  // Tabela de produtos
+  doc.setFontSize(12);
+  doc.setTextColor(80, 80, 80);
+  doc.text("PRODUTOS", 14, 95);
+  doc.line(14, 97, 196, 97);
+  
+  const columns = ["Quantidade", "Produto", "Preço Unitário", "Total"];
+  const rows = [];
+  let totalGeral = 0;
+  
+  pedido.itens.forEach(item => {
+    const totalItem = item.quantidade * item.preco;
+    totalGeral += totalItem;
+    rows.push([
+      item.quantidade,
+      item.produto,
+      `R$ ${item.preco.toFixed(2)}`,
+      `R$ ${totalItem.toFixed(2)}`
+    ]);
+  });
+  
+  // Adicionar linha do total geral
+  rows.push(["", "", "TOTAL GERAL", `R$ ${totalGeral.toFixed(2)}`]);
+  
+  doc.autoTable({
+    startY: 100,
+    head: [columns],
+    body: rows,
+    theme: 'grid',
+    headStyles: {
+      fillColor: [230, 230, 230],
+      textColor: [0, 0, 0],
+      fontStyle: 'bold'
+    },
+    styles: {
+      fontSize: 10,
+      cellPadding: 3
+    },
+    columnStyles: {
+      0: { cellWidth: 25 },
+      1: { cellWidth: 'auto' },
+      2: { cellWidth: 40 },
+      3: { cellWidth: 40 }
+    }
+  });
+  
+  // Assinatura
+  const finalY = doc.lastAutoTable.finalY + 15;
+  doc.setFontSize(12);
+  doc.setTextColor(80, 80, 80);
+  doc.text("ASSINATURA", 14, finalY);
+  doc.line(14, finalY + 2, 196, finalY + 2);
+  
+  doc.setFontSize(10);
+  doc.text("Ass: ___________________________________", 14, finalY + 20);
+  
+  // Salvar ou abrir o PDF
+  if (download) {
+    doc.save(`pedido_${pedido.numero}.pdf`);
+  }
+  
+  return doc;
+}
+
+// Função para baixar PDF
+function baixarPDF(pid) {
+  gerarPDF(pedidos[pid], true);
+  mostrarNotificacao('PDF baixado com sucesso!');
+}
+</script>
+</body>
+</html>
