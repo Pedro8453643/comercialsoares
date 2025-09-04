@@ -31,12 +31,13 @@ body {
   background: #f8fafc;
   color: #334155;
   line-height: 1.6;
+  font-size: 14px; /* Tamanho de fonte base menor para mobile */
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 15px;
 }
 
 /* Tela de Login */
@@ -52,14 +53,15 @@ body {
   align-items: center;
   z-index: 9999;
   transition: opacity 0.5s ease;
+  padding: 15px;
 }
 
 .login-container {
   background: white;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 10px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  width: 90%;
+  width: 100%;
   max-width: 400px;
   text-align: center;
 }
@@ -69,6 +71,7 @@ body {
   margin-bottom: 1.5rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid var(--border);
+  font-size: 1.5rem;
 }
 
 .login-form .form-group {
@@ -100,34 +103,43 @@ body {
   color: var(--danger);
   margin-top: 0.5rem;
   display: none;
+  font-size: 0.9rem;
 }
 
 /* Header */
 header {
   background: var(--primary);
   color: white;
-  padding: 1rem 0;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 0.8rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .header-content {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
 }
 
 header h1 {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 600;
+  margin-bottom: 0.8rem;
+  text-align: center;
 }
 
 nav {
   display: flex;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  justify-content: center;
+  width: 100%;
 }
 
 .tab-btn {
-  padding: 0.6rem 1.2rem;
+  padding: 0.5rem 0.8rem;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -135,6 +147,13 @@ nav {
   color: white;
   font-weight: 500;
   transition: all 0.3s ease;
+  font-size: 0.85rem;
+  flex: 1;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
 }
 
 .tab-btn:hover {
@@ -148,16 +167,16 @@ nav {
 
 /* Main Content */
 main {
-  padding: 2rem 0;
+  padding: 1.5rem 0;
 }
 
 .tab {
   display: none;
   background: white;
   border-radius: 10px;
-  padding: 2rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  margin-top: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-top: 1rem;
 }
 
 .tab.active {
@@ -172,25 +191,27 @@ main {
 
 h2 {
   color: var(--primary);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid var(--border);
+  font-size: 1.3rem;
 }
 
 /* Form Styles */
 .form-group {
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
 }
 
 label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
   font-weight: 500;
+  font-size: 0.95rem;
 }
 
 input, select {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.7rem;
   border: 1px solid var(--border);
   border-radius: 6px;
   font-size: 1rem;
@@ -204,17 +225,17 @@ input:focus, select:focus {
 
 /* Button Styles */
 .btn {
-  padding: 0.75rem 1.5rem;
+  padding: 0.7rem 1.2rem;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 500;
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .btn-primary {
@@ -253,28 +274,37 @@ input:focus, select:focus {
   background: #d97706;
 }
 
-/* Table Styles */
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+/* Table Styles - Mobile Friendly */
 .table-container {
   overflow-x: auto;
-  margin: 1.5rem 0;
+  margin: 1.2rem 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 1rem 0;
+  margin: 0.8rem 0;
+  min-width: 500px; /* Força scroll horizontal em tabelas muito complexas */
 }
 
 th, td {
-  padding: 0.75rem 1rem;
+  padding: 0.6rem 0.8rem;
   text-align: left;
   border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
 }
 
 th {
   background: #f8fafc;
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text);
+  white-space: nowrap;
 }
 
 tr:hover {
@@ -285,7 +315,7 @@ tr:hover {
 .card {
   background: white;
   border-radius: 8px;
-  padding: 1.5rem;
+  padding: 1.2rem;
   margin-bottom: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   border-left: 4px solid var(--primary);
@@ -295,41 +325,72 @@ tr:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .card-title {
   font-weight: 600;
   color: var(--primary);
+  font-size: 1.1rem;
 }
 
 .card-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  flex-wrap: wrap;
 }
 
-/* Grid System */
+/* Grid System para mobile */
 .row {
   display: flex;
   flex-wrap: wrap;
-  margin: 0 -10px;
+  margin: 0 -8px;
 }
 
 .col {
-  flex: 1;
-  padding: 0 10px;
-  min-width: 300px;
-  margin-bottom: 20px;
+  flex: 1 0 100%;
+  padding: 0 8px;
+  margin-bottom: 15px;
+}
+
+/* Para tablets e maiores */
+@media (min-width: 768px) {
+  .col {
+    flex: 1;
+    min-width: auto;
+  }
+  
+  .header-content {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  header h1 {
+    margin-bottom: 0;
+    text-align: left;
+  }
+  
+  nav {
+    width: auto;
+    flex-wrap: nowrap;
+  }
+  
+  .tab-btn {
+    min-width: auto;
+  }
 }
 
 /* Alert Styles */
 .alert {
-  padding: 1rem;
+  padding: 0.9rem;
   border-radius: 6px;
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.6rem;
+  font-size: 0.95rem;
 }
 
 .alert-success {
@@ -347,7 +408,7 @@ tr:hover {
 /* Badge */
 .badge {
   display: inline-block;
-  padding: 0.35rem 0.65rem;
+  padding: 0.3rem 0.6rem;
   font-size: 0.75rem;
   font-weight: 600;
   border-radius: 9999px;
@@ -363,26 +424,51 @@ tr:hover {
   color: #92400e;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  nav {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .tab-btn {
-    flex: 1;
-    text-align: center;
-  }
-  
-  .col {
-    flex: 100%;
-  }
+/* Modal para mobile */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+}
+
+.modal-content {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.modal-title {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text);
 }
 
 /* Utilities */
@@ -399,11 +485,11 @@ tr:hover {
 }
 
 .mt-2 {
-  margin-top: 1rem;
+  margin-top: 0.8rem;
 }
 
 .mt-3 {
-  margin-top: 1.5rem;
+  margin-top: 1.2rem;
 }
 
 .mb-1 {
@@ -411,15 +497,88 @@ tr:hover {
 }
 
 .mb-2 {
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 }
 
 .mb-3 {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
 }
 
 .hidden {
   display: none;
+}
+
+/* Estilo para lista de pedidos em cards (alternativa à tabela) */
+.pedido-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: white;
+}
+
+.pedido-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.pedido-card-title {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.pedido-card-body p {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.pedido-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+  flex-wrap: wrap;
+}
+
+/* Input group para formulários em mobile */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+@media (min-width: 576px) {
+  .input-group {
+    flex-direction: row;
+  }
+  
+  .input-group .form-group {
+    flex: 1;
+  }
+}
+
+/* Melhorias para formulários em mobile */
+.form-control {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+/* Ajustes para inputs numéricos em mobile */
+input[type="number"] {
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+/* Remove setas em inputs number */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 </style>
 </head>
@@ -450,9 +609,9 @@ tr:hover {
       <div class="header-content">
         <h1><i class="fas fa-store"></i> Comercial Soares</h1>
         <nav>
-          <button class="tab-btn active" data-tab="criar"><i class="fas fa-plus-circle"></i> Criar Pedido</button>
-          <button class="tab-btn" data-tab="ver"><i class="fas fa-list"></i> Ver Pedidos</button>
-          <button class="tab-btn" data-tab="reabrir"><i class="fas fa-undo"></i> Reabrir Pedidos</button>
+          <button class="tab-btn active" data-tab="criar"><i class="fas fa-plus-circle"></i> Criar</button>
+          <button class="tab-btn" data-tab="ver"><i class="fas fa-list"></i> Ver</button>
+          <button class="tab-btn" data-tab="reabrir"><i class="fas fa-undo"></i> Reabrir</button>
           <button class="tab-btn" onclick="sair()"><i class="fas fa-sign-out-alt"></i> Sair</button>
         </nav>
       </div>
@@ -486,8 +645,8 @@ tr:hover {
                 <tr>
                   <th>#</th>
                   <th>Produto</th>
-                  <th>Quantidade</th>
-                  <th>Preço Unit.</th>
+                  <th>Qtd</th>
+                  <th>Preço</th>
                   <th>Total</th>
                   <th>Ação</th>
                 </tr>
@@ -509,25 +668,19 @@ tr:hover {
           
           <div class="mt-3">
             <h3><i class="fas fa-plus"></i> Adicionar Item</h3>
-            <div class="row">
-              <div class="col">
-                <div class="form-group">
-                  <label for="produto">Produto</label>
-                  <input type="text" id="produto" placeholder="Nome do produto">
-                </div>
+            <div class="input-group">
+              <div class="form-group">
+                <label for="produto">Produto</label>
+                <input type="text" id="produto" placeholder="Nome do produto">
               </div>
-              <div class="col">
-                <div class="form-group">
-                  <label for="quantidade">Quantidade</label>
-                  <input type="number" id="quantidade" value="1" min="1">
-                </div>
+              <div class="form-group">
+                <label for="quantidade">Quantidade</label>
+                <input type="number" id="quantidade" value="1" min="1">
               </div>
-              <div class="col">
-                <div class="form-group">
-                  <label for="preco">Preço Unitário (R$)</label>
-                  <input type="number" id="preco" value="0" step="0.01" min="0">
-                </div>
-              </div>
+            </div>
+            <div class="form-group">
+              <label for="preco">Preço Unitário (R$)</label>
+              <input type="number" id="preco" value="0" step="0.01" min="0">
             </div>
             
             <button class="btn btn-primary" onclick="adicionarItem()">
@@ -570,11 +723,11 @@ tr:hover {
   </main>
 
   <!-- Modal para visualizar pedido -->
-  <div id="modalPedido" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; justify-content: center; align-items: center;">
-    <div style="background: white; padding: 2rem; border-radius: 10px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h3 id="modalTitle">Detalhes do Pedido</h3>
-        <button onclick="fecharModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+  <div id="modalPedido" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle" class="modal-title">Detalhes do Pedido</h3>
+        <button class="modal-close" onclick="fecharModal()">&times;</button>
       </div>
       <div id="modalContent"></div>
     </div>
@@ -748,7 +901,7 @@ function atualizarItens() {
         <td>R$ ${item.preco.toFixed(2)}</td>
         <td>R$ ${totalItem.toFixed(2)}</td>
         <td>
-          <button class="btn btn-danger" onclick="removerItem(${idx})">
+          <button class="btn btn-danger btn-sm" onclick="removerItem(${idx})">
             <i class="fas fa-trash"></i>
           </button>
         </td>
@@ -842,20 +995,22 @@ function atualizarListaPedidos() {
     });
     
     const card = document.createElement('div');
-    card.className = 'card';
+    card.className = 'pedido-card';
     card.innerHTML = `
-      <div class="card-header">
-        <h3 class="card-title">Pedido #${pedido.numero} - ${pedido.cliente}</h3>
+      <div class="pedido-card-header">
+        <h3 class="pedido-card-title">Pedido #${pedido.numero} - ${pedido.cliente}</h3>
         <span class="badge badge-success">Finalizado</span>
       </div>
-      <p><strong>Data:</strong> ${pedido.data}</p>
-      <p><strong>Total:</strong> R$ ${totalGeral.toFixed(2)}</p>
-      <p><strong>Itens:</strong> ${pedido.itens.length}</p>
-      <div class="card-actions mt-2">
-        <button class="btn btn-primary" onclick="visualizarPedido('${pid}')">
+      <div class="pedido-card-body">
+        <p><strong>Data:</strong> ${pedido.data}</p>
+        <p><strong>Total:</strong> R$ ${totalGeral.toFixed(2)}</p>
+        <p><strong>Itens:</strong> ${pedido.itens.length}</p>
+      </div>
+      <div class="pedido-card-actions">
+        <button class="btn btn-primary btn-sm" onclick="visualizarPedido('${pid}')">
           <i class="fas fa-eye"></i> Visualizar
         </button>
-        <button class="btn btn-secondary" onclick="baixarPDF('${pid}')">
+        <button class="btn btn-secondary btn-sm" onclick="baixarPDF('${pid}')">
           <i class="fas fa-download"></i> Baixar PDF
         </button>
       </div>
@@ -879,8 +1034,8 @@ function visualizarPedido(pid) {
           <tr>
             <th>#</th>
             <th>Produto</th>
-            <th>Quantidade</th>
-            <th>Preço Unit.</th>
+            <th>Qtd</th>
+            <th>Preço</th>
             <th>Total</th>
           </tr>
         </thead>
@@ -968,87 +1123,6 @@ function abrirPedidoReaberto() {
   atualizarItens();
   salvar();
   mostrarNotificacao('Pedido reaberto com sucesso!');
-}
-
-// Função para atualizar itens do pedido reaberto
-function atualizarItensReaberto() {
-  const tbody = document.getElementById('itensReaberto');
-  const pedido = pedidos[pedidoAtivo];
-  
-  if (pedido.itens.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" class="text-center">Nenhum item adicionado ainda</td></tr>';
-    return;
-  }
-  
-  tbody.innerHTML = '';
-  let totalGeral = 0;
-  
-  pedido.itens.forEach((item, idx) => {
-    const totalItem = item.quantidade * item.preco;
-    totalGeral += totalItem;
-    
-    tbody.innerHTML += `
-      <tr>
-        <td>${idx + 1}</td>
-        <td>${item.produto}</td>
-        <td>${item.quantidade}</td>
-        <td>R$ ${item.preco.toFixed(2)}</td>
-        <td>R$ ${totalItem.toFixed(2)}</td>
-        <td>
-          <button class="btn btn-danger" onclick="removerItemReaberto(${idx})">
-            <i class="fas fa-trash"></i>
-          </button>
-        </td>
-      </tr>
-    `;
-  });
-}
-
-// Função para adicionar item ao pedido reaberto
-function adicionarItemReaberto() {
-  const produto = document.getElementById('produtoReaberto').value.trim();
-  const quantidade = parseInt(document.getElementById('quantidadeReaberto').value);
-  const preco = parseFloat(document.getElementById('precoReaberto').value);
-  
-  if (!produto || quantidade <= 0 || preco < 0) {
-    mostrarNotificacao('Preencha todos os campos corretamente', 'error');
-    return;
-  }
-  
-  pedidos[pedidoAtivo].itens.push({ produto, quantidade, preco });
-  
-  document.getElementById('produtoReaberto').value = '';
-  document.getElementById('quantidadeReaberto').value = 1;
-  document.getElementById('precoReaberto').value = 0;
-  
-  atualizarItensReaberto();
-  salvar();
-  mostrarNotificacao('Item adicionado com sucesso!');
-}
-
-// Função para remover item do pedido reaberto
-function removerItemReaberto(idx) {
-  pedidos[pedidoAtivo].itens.splice(idx, 1);
-  atualizarItensReaberto();
-  salvar();
-  mostrarNotificacao('Item removido com sucesso!');
-}
-
-// Função para finalizar o pedido reaberto
-function finalizarPedidoReaberto() {
-  if (pedidos[pedidoAtivo].itens.length === 0) {
-    mostrarNotificacao('Não é possível finalizar pedido vazio', 'error');
-    return;
-  }
-  
-  pedidos[pedidoAtivo].finalizado = true;
-  gerarPDF(pedidos[pedidoAtivo]);
-  
-  mostrarNotificacao('Pedido finalizado com sucesso! PDF gerado.');
-  
-  pedidoAtivo = null;
-  document.getElementById('detalhesReaberto').innerHTML = '';
-  salvar();
 }
 
 // Função para gerar PDF
