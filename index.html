@@ -7,18 +7,19 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 :root {
-  --primary: #5C7AEA;
-  --primary-dark: #3B52B9;
-  --secondary: #F59E0B;
-  --accent: #F43F5E;
-  --neutral: #F9FAFB;
-  --text: #1E293B;
-  --success: #22C55E;
-  --warning: #FBBF24;
-  --danger: #EF4444;
-  --border: #E2E8F0;
-  --card-bg: #FFFFFF;
-  --shadow: rgba(92, 122, 234, 0.15);
+  /* Cores principais */
+  --primary: #1a73e8;          
+  --primary-dark: #155ab6;   
+  --success: #22c55e;         
+  --warning: #fbbf24;       
+  --secondary: #F59E0B;   
+  --error: #e84545;           
+  --background: #f4f7fa;      
+  --card-background: #fff;     
+  --card-shadow: rgba(0,0,0,0.1); 
+  --text-color: #333;          
+  --text-light: #666; 
+  --danger: #EF4444;         
 }
 * {
   margin: 0;
@@ -209,7 +210,7 @@ label {
   font-size: 0.95rem;
 }
 
-input, select {
+input, select, textarea {
   width: 100%;
   padding: 0.7rem;
   border: 1px solid var(--border);
@@ -217,7 +218,7 @@ input, select {
   font-size: 1rem;
 }
 
-input:focus, select:focus {
+input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
@@ -574,6 +575,52 @@ input:focus, select:focus {
   color: var(--primary);
 }
 
+/* Estilo para a seção de colar produtos */
+.collapsible-section {
+  margin-top: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.collapsible-header {
+  background-color: #f8f9fa;
+  padding: 0.7rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+}
+
+.collapsible-content {
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.collapsible-content.expanded {
+  padding: 1rem;
+  max-height: 300px;
+}
+
+.paste-instructions {
+  background-color: #f1f8ff;
+  padding: 0.8rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.paste-example {
+  font-family: monospace;
+  background-color: #f6f8fa;
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+}
+
 @media (min-width: 576px) {
   .input-group {
     flex-direction: row;
@@ -708,20 +755,36 @@ input::-webkit-inner-spin-button {
               </div>
               <div class="form-group">
                 <label for="quantidade">Quantidade</label>
-                <input type="number" id="quantidade" value="1" min="1">
+                <input type="number" id="quantidade" placeholder="0" min="1">
               </div>
             </div>
             <div class="form-group">
               <label for="preco">Preço Unitário (R$)</label>
-              <input type="number" id="preco" value="0" step="0.01" min="0">
+              <input type="number" id="preco" placeholder="0" step="0.01" min="0">
             </div>
             
-            <button class="btn btn-primary" onclick="adicionarItem()">
+            <!-- Seção para colar produtos -->
+            <div class="collapsible-section">
+              <div class="collapsible-header" onclick="toggleCollapsible('pasteSection')">
+                <span><i class="fas fa-paste"></i> Colar Produtos</span>
+                <span id="pasteSectionIcon"><i class="fas fa-chevron-down"></i></span>
+              </div>
+              <div id="pasteSection" class="collapsible-content">
+                <div class="paste-instructions">
+                  <p>Cole abaixo os produtos no formato: <strong>Quantidade Nome Preço</strong></p>
+                </div>
+                <div class="form-group">
+                  <textarea id="produtosParaColar" rows="5" placeholder="Cole aqui os produtos"></textarea>
+                </div>
+              </div>
+            </div>
+            
+            <button class="btn btn-primary mt-2" id="btnAdicionarItem" onclick="adicionarItem()">
               <i class="fas fa-plus"></i> Adicionar Item
             </button>
           </div>
           
-          <div class="mt-3 text-right">
+          <div class="mt-3 text-right"> 
             <button class="btn btn-secondary" onclick="finalizarPedido()">
               <i class="fas fa-check"></i> Finalizar Pedido
             </button>
@@ -773,7 +836,7 @@ input::-webkit-inner-spin-button {
 // Inicializar jsPDF
 const { jsPDF } = window.jspdf;
 
-// Variáveis globais
+// Variáveis globales
 let pedidos = JSON.parse(localStorage.getItem('pedidos') || '{}');
 let pedidoAtivo = null;
 const SENHA_CORRETA = "S600ad"; // Senha definida
@@ -956,20 +1019,40 @@ function adicionarItem() {
     return;
   }
   
-  const produto = document.getElementById('produto').value.trim();
-  const quantidade = parseInt(document.getElementById('quantidade').value);
-  const preco = parseFloat(document.getElementById('preco').value);
+  const pasteSection = document.getElementById('pasteSection');
   
-  if (!produto || quantidade <= 0 || preco < 0) {
-    mostrarNotificacao('Preencha todos os campos corretamente', 'error');
+  // Verificar se a seção de colar está expandida
+  if (pasteSection.classList.contains('expanded')) {
+    // Se estiver expandida, processar os produtos colados
+    processarProdutosColados();
+    return;
+  }
+  
+  // Se não estiver expandida, adicionar item individual
+  const produto = document.getElementById('produto').value.trim();
+  const quantidadeInput = document.getElementById('quantidade').value;
+  const precoInput = document.getElementById('preco').value;
+  
+  // Verificar se os campos estão vazios
+  if (!produto || !quantidadeInput || !precoInput) {
+    mostrarNotificacao('Preencha todos os campos', 'error');
+    return;
+  }
+  
+  const quantidade = parseInt(quantidadeInput);
+  const preco = parseFloat(precoInput);
+  
+  if (quantidade <= 0 || preco < 0) {
+    mostrarNotificacao('Valores devem ser positivos', 'error');
     return;
   }
   
   pedidos[pedidoAtivo].itens.push({ produto, quantidade, preco });
   
+  // Limpar os campos, mas manter o placeholder
   document.getElementById('produto').value = '';
-  document.getElementById('quantidade').value = 1;
-  document.getElementById('preco').value = 0;
+  document.getElementById('quantidade').value = '';
+  document.getElementById('preco').value = '';
   
   atualizarItens();
   salvar();
@@ -1185,89 +1268,128 @@ function abrirPedidoReaberto() {
 function gerarPDF(pedido, download = false) {
   const doc = new jsPDF();
   
-  // Cabeçalho
+  // Configurações iniciais
+  doc.setDrawColor(0, 0, 0);
+  doc.setLineWidth(0.5);
+  doc.rect(10, 10, 190, 277); // Retângulo externo
+  
+  // Título
   doc.setFontSize(18);
-  doc.setTextColor(40, 40, 40);
+  doc.setFont(undefined, 'bold');
   doc.text("PEDIDO ELETRÔNICO", 105, 20, { align: "center" });
+  
+  // Linha abaixo do título
+  doc.line(10, 25, 200, 25);
   
   // Informações da empresa
   doc.setFontSize(12);
-  doc.setTextColor(80, 80, 80);
-  doc.text("DADOS DA EMPRESA", 14, 35);
-  doc.line(14, 37, 196, 37);
+  doc.setFont(undefined, 'bold');
+  doc.text("DADOS DA EMPRESA", 105, 35, { align: "center" });
+  
+  // Linha abaixo do cabeçalho
+  doc.line(10, 38, 200, 38);
   
   doc.setFontSize(10);
-  doc.text("Comercial Soares", 14, 45);
-  doc.text("CNPJ: 40.457.273/0001-84", 14, 52);
-  doc.text("Telefone: 34 99985-8000", 105, 45);
-  doc.text("Rua: Getúlio Vargas, Nº 631", 105, 52);
+  doc.setFont(undefined, 'normal');
+  doc.text("Comercial Soares", 15, 45);
+  doc.text("CNPJ: 40.457.273/0001-84", 15, 52);
+  doc.text("Telefone: 34 99985-8000", 110, 45);
+  doc.text("Rua: Getúlio Vargas, Nº 631", 110, 52);
+  
+  // Linha abaixo dos dados da empresa
+  doc.line(10, 58, 200, 58);
   
   // Informações do pedido
   doc.setFontSize(12);
-  doc.setTextColor(80, 80, 80);
-  doc.text("DADOS DO PEDIDO", 14, 65);
-  doc.line(14, 67, 196, 67);
+  doc.setFont(undefined, 'bold');
+  doc.text("DADOS DO PEDIDO", 105, 65, { align: "center" });
+  
+  // Linha abaixo do cabeçalho
+  doc.line(10, 68, 200, 68);
   
   doc.setFontSize(10);
-  doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, 14, 75);
-  doc.text(`Pedido Nº: ${pedido.numero}`, 105, 75);
-  doc.text(`Cliente: ${pedido.cliente}`, 14, 82);
+  doc.setFont(undefined, 'normal');
+  doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, 15, 75);
+  doc.text(`Pedido Nº: ${pedido.numero}`, 110, 75);
+  doc.text(`Cliente: ${pedido.cliente}`, 15, 82);
+  
+  // Linha abaixo dos dados do pedido
+  doc.line(10, 88, 200, 88);
   
   // Tabela de produtos
   doc.setFontSize(12);
-  doc.setTextColor(80, 80, 80);
-  doc.text("PRODUTOS", 14, 95);
-  doc.line(14, 97, 196, 97);
+  doc.setFont(undefined, 'bold');
+  doc.text("PRODUTOS", 105, 95, { align: "center" });
   
-  const columns = ["Quantidade", "Produto", "Preço Unitário", "Total"];
-  const rows = [];
+  // Cabeçalho da tabela
+  doc.setFontSize(10);
+  doc.setFont(undefined, 'bold');
+  doc.rect(10, 100, 40, 10); // Quantidade
+  doc.text("Quantidade", 30, 105, { align: "center" });
+  
+  doc.rect(50, 100, 90, 10); // Produto
+  doc.text("Produto", 95, 105, { align: "center" });
+  
+  doc.rect(140, 100, 30, 10); // Preço Unitário
+  doc.text("Preço Unitário", 155, 105, { align: "center" });
+  
+  doc.rect(170, 100, 30, 10); // Total
+  doc.text("Total", 185, 105, { align: "center" });
+  
+  // Itens da tabela
+  let y = 110;
   let totalGeral = 0;
   
   pedido.itens.forEach(item => {
     const totalItem = item.quantidade * item.preco;
     totalGeral += totalItem;
-    rows.push([
-      item.quantidade,
-      item.produto,
-      `R$ ${item.preco.toFixed(2)}`,
-      `R$ ${totalItem.toFixed(2)}`
-    ]);
+    
+    doc.setFont(undefined, 'normal');
+    
+    // Quantidade
+    doc.rect(10, y, 40, 10);
+    doc.text(item.quantidade.toString(), 30, y + 5, { align: "center" });
+    
+    // Produto
+    doc.rect(50, y, 90, 10);
+    // Truncar nome do produto se for muito longo
+    const produto = item.produto.length > 30 ? item.produto.substring(0, 27) + "..." : item.produto;
+    doc.text(produto, 55, y + 5);
+    
+    // Preço Unitário
+    doc.rect(140, y, 30, 10);
+    doc.text(`R$ ${item.preco.toFixed(2)}`, 155, y + 5, { align: "center" });
+    
+    // Total
+    doc.rect(170, y, 30, 10);
+    doc.text(`R$ ${totalItem.toFixed(2)}`, 185, y + 5, { align: "center" });
+    
+    y += 10;
   });
   
-  // Adicionar linha do total geral
-  rows.push(["", "", "TOTAL GERAL", `R$ ${totalGeral.toFixed(2)}`]);
+  // Total Geral
+  doc.setFont(undefined, 'bold');
+  doc.rect(10, y, 160, 10);
+  doc.text("TOTAL GERAL", 85, y + 5, { align: "center" });
   
-  doc.autoTable({
-    startY: 100,
-    head: [columns],
-    body: rows,
-    theme: 'grid',
-    headStyles: {
-      fillColor: [230, 230, 230],
-      textColor: [0, 0, 0],
-      fontStyle: 'bold'
-    },
-    styles: {
-      fontSize: 10,
-      cellPadding: 3
-    },
-    columnStyles: {
-      0: { cellWidth: 25 },
-      1: { cellWidth: 'auto' },
-      2: { cellWidth: 40 },
-      3: { cellWidth: 40 }
-    }
-  });
+  doc.rect(170, y, 30, 10);
+  doc.text(`R$ ${totalGeral.toFixed(2)}`, 185, y + 5, { align: "center" });
+  
+  // Linha acima da assinatura (junta com a linha acima)
+  doc.line(10, y + 15, 200, y + 15);
   
   // Assinatura
-  const finalY = doc.lastAutoTable.finalY + 15;
+  y += 20;
   doc.setFontSize(12);
-  doc.setTextColor(80, 80, 80);
-  doc.text("ASSINATURA", 14, finalY);
-  doc.line(14, finalY + 2, 196, finalY + 2);
+  doc.setFont(undefined, 'bold');
+  doc.text("ASSINATURA", 105, y + 5, { align: "center" });
+  
+  // Linha abaixo do cabeçalho da assinatura (junta com a linha acima)
+  doc.line(10, y + 8, 200, y + 8);
   
   doc.setFontSize(10);
-  doc.text("Ass: ___________________________________", 14, finalY + 20);
+  doc.setFont(undefined, 'normal');
+  doc.text("Ass: ___________________________________", 15, y + 25);
   
   // Salvar ou abrir o PDF
   if (download) {
@@ -1281,6 +1403,102 @@ function gerarPDF(pedido, download = false) {
 function baixarPDF(pid) {
   gerarPDF(pedidos[pid], true);
   mostrarNotificacao('PDF baixado com sucesso!');
+}
+
+// Função para expandir/recolher a seção de colar produtos
+function toggleCollapsible(sectionId) {
+  const content = document.getElementById(sectionId);
+  const icon = document.getElementById(sectionId + 'Icon');
+  const btnAdicionar = document.getElementById('btnAdicionarItem');
+  
+  content.classList.toggle('expanded');
+  
+  if (content.classList.contains('expanded')) {
+    icon.innerHTML = '<i class="fas fa-chevron-up"></i>';
+    btnAdicionar.innerHTML = '<i class="fas fa-plus-circle"></i> Adicionar Produtos';
+  } else {
+    icon.innerHTML = '<i class="fas fa-chevron-down"></i>';
+    btnAdicionar.innerHTML = '<i class="fas fa-plus"></i> Adicionar Item';
+  }
+}
+
+// Função para processar produtos colados
+function processarProdutosColados() {
+  if (!pedidoAtivo) {
+    mostrarNotificacao('Inicie um pedido primeiro', 'error');
+    return;
+  }
+  
+  const texto = document.getElementById('produtosParaColar').value.trim();
+  if (!texto) {
+    mostrarNotificacao('Cole os produtos no formato correto', 'error');
+    return;
+  }
+  
+  // Dividir o texto em partes usando espaços como separadores
+  const partes = texto.split(/\s+/);
+  let produtosAdicionados = 0;
+  let erros = 0;
+  let i = 0;
+  
+  while (i < partes.length) {
+    // Verificar se há pelo menos 3 partes (quantidade, nome e preço)
+    if (i + 2 >= partes.length) {
+      erros++;
+      break;
+    }
+    
+    // A primeira parte deve ser a quantidade
+    const quantidade = parseInt(partes[i]);
+    if (isNaN(quantidade) || quantidade <= 0) {
+      erros++;
+      i++;
+      continue;
+    }
+    
+    // A última parte deve ser o preço
+    const preco = parseFloat(partes[partes.length - 1]);
+    if (isNaN(preco) || preco < 0) {
+      erros++;
+      break;
+    }
+    
+    // Tudo entre a primeira e a última parte é o nome do produto
+    const nomeParts = [];
+    for (let j = i + 1; j < partes.length - 1; j++) {
+      // Verificar se é um número (poderia ser o próximo produto)
+      if (!isNaN(parseFloat(partes[j]))) {
+        break;
+      }
+      nomeParts.push(partes[j]);
+    }
+    
+    const produto = nomeParts.join(' ');
+    
+    if (produto && quantidade > 0 && preco >= 0) {
+      pedidos[pedidoAtivo].itens.push({ 
+        produto, 
+        quantidade, 
+        preco 
+      });
+      produtosAdicionados++;
+      
+      // Avançar o índice para o próximo produto
+      i += 1 + nomeParts.length + 1;
+    } else {
+      erros++;
+      i++;
+    }
+  }
+  
+  if (produtosAdicionados > 0) {
+    atualizarItens();
+    salvar();
+    document.getElementById('produtosParaColar').value = '';
+    mostrarNotificacao(`${produtosAdicionados} produto(s) adicionado(s) com sucesso!${erros > 0 ? ` ${erros} erro(s) encontrado(s).` : ''}`);
+  } else if (erros > 0) {
+    mostrarNotificacao('Nenhum produto válido encontrado. Verifique o formato.', 'error');
+  }
 }
 </script>
 </body>
