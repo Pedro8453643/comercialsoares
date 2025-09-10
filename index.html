@@ -771,7 +771,7 @@ input::-webkit-inner-spin-button {
               </div>
               <div id="pasteSection" class="collapsible-content">
                 <div class="paste-instructions">
-                  <p>Cole abaixo os produtos no formato: <strong>Quantidade Nome Preço</strong></p>
+                  <p>Cole abaixo os produtos no formato: <strong>Quantidade Nome vPreço</strong></p>
                 </div>
                 <div class="form-group">
                   <textarea id="produtosParaColar" rows="5" placeholder="Cole aqui os produtos"></textarea>
@@ -1264,138 +1264,168 @@ function abrirPedidoReaberto() {
   mostrarNotificacao('Pedido reaberto com sucesso!');
 }
 
-// Função para gerar PDF
+// Função para gerar PDF idêntico ao modelo enviado, com quebra de página e borda em todas as páginas
 function gerarPDF(pedido, download = false) {
   const doc = new jsPDF();
-  
-  // Configurações iniciais
-  doc.setDrawColor(0, 0, 0);
-  doc.setLineWidth(0.5);
-  doc.rect(10, 10, 190, 277); // Retângulo externo
-  
+
+  // Função auxiliar: desenhar borda
+  function desenharBorda() {
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.5);
+    doc.rect(10, 10, 190, 277);
+  }
+
+  // Função auxiliar: cabeçalho da tabela
+  function desenharCabecalhoTabela(y) {
+    doc.setFontSize(11);
+    doc.setFont(undefined, 'bold');
+    doc.rect(10, y, 40, 10);
+    doc.text("Quantidade", 30, y + 7, { align: "center" });
+    doc.rect(50, y, 90, 10);
+    doc.text("Produto", 95, y + 7, { align: "center" });
+    doc.rect(140, y, 30, 10);
+    doc.text("Preço Unitário", 155, y + 7, { align: "center" });
+    doc.rect(170, y, 30, 10);
+    doc.text("Total", 185, y + 7, { align: "center" });
+  }
+
+  // ===== PRIMEIRA PÁGINA =====
+  desenharBorda();
+
   // Título
-  doc.setFontSize(18);
+  doc.setFontSize(16);
   doc.setFont(undefined, 'bold');
   doc.text("PEDIDO ELETRÔNICO", 105, 20, { align: "center" });
-  
-  // Linha abaixo do título
-  doc.line(10, 25, 200, 25);
-  
-  // Informações da empresa
+
+  let y = 30;
+
+  // ===== DADOS DA EMPRESA =====
   doc.setFontSize(12);
   doc.setFont(undefined, 'bold');
-  doc.text("DADOS DA EMPRESA", 105, 35, { align: "center" });
-  
-  // Linha abaixo do cabeçalho
-  doc.line(10, 38, 200, 38);
-  
+  doc.setFillColor(230, 230, 230);
+  doc.rect(11, y, 188, 8, "F");
+  doc.text("DADOS DA EMPRESA", 105, y + 6, { align: "center" });
+
+  y += 12;
   doc.setFontSize(10);
   doc.setFont(undefined, 'normal');
-  doc.text("Comercial Soares", 15, 45);
-  doc.text("CNPJ: 40.457.273/0001-84", 15, 52);
-  doc.text("Telefone: 34 99985-8000", 110, 45);
-  doc.text("Rua: Getúlio Vargas, Nº 631", 110, 52);
-  
-  // Linha abaixo dos dados da empresa
-  doc.line(10, 58, 200, 58);
-  
-  // Informações do pedido
-  doc.setFontSize(12);
+  doc.rect(10, y, 95, 10);
+  doc.text("Comercial Soares", 12, y + 7);
+  doc.rect(105, y, 95, 10);
+  doc.text("CNPJ: 40.457.273/0001-84", 107, y + 7);
+
+  y += 10;
+  doc.rect(10, y, 95, 10);
+  doc.text("Telefone: 34 99985-8000", 12, y + 7);
+  doc.rect(105, y, 95, 10);
+  doc.text("Rua: Getúlio Vargas, Nº 631", 107, y + 7);
+
+  // ===== DADOS DO PEDIDO =====
+  y += 15;
   doc.setFont(undefined, 'bold');
-  doc.text("DADOS DO PEDIDO", 105, 65, { align: "center" });
-  
-  // Linha abaixo do cabeçalho
-  doc.line(10, 68, 200, 68);
-  
-  doc.setFontSize(10);
+  doc.setFillColor(230, 230, 230);
+  doc.rect(11, y, 188, 8, "F");
+  doc.text("DADOS DO PEDIDO", 105, y + 6, { align: "center" });
+
+  y += 12;
   doc.setFont(undefined, 'normal');
-  doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, 15, 75);
-  doc.text(`Pedido Nº: ${pedido.numero}`, 110, 75);
-  doc.text(`Cliente: ${pedido.cliente}`, 15, 82);
-  
-  // Linha abaixo dos dados do pedido
-  doc.line(10, 88, 200, 88);
-  
-  // Tabela de produtos
-  doc.setFontSize(12);
+  doc.rect(10, y, 95, 10);
+  doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, 12, y + 7);
+  doc.rect(105, y, 95, 10);
+  doc.text(`Pedido Nº: ${pedido.numero}`, 107, y + 7);
+
+  y += 10;
+  doc.rect(10, y, 190, 10);
+  doc.text(`Cliente: ${pedido.cliente}`, 12, y + 7);
+
+  // ===== PRODUTOS =====
+  y += 15;
   doc.setFont(undefined, 'bold');
-  doc.text("PRODUTOS", 105, 95, { align: "center" });
-  
+  doc.setFillColor(230, 230, 230);
+  doc.rect(11, y, 188, 8, "F");
+  doc.text("PRODUTOS", 105, y + 6, { align: "center" });
+
   // Cabeçalho da tabela
+  y += 10;
+  desenharCabecalhoTabela(y);
+
+  // Itens do pedido
+  y += 10;
   doc.setFontSize(10);
-  doc.setFont(undefined, 'bold');
-  doc.rect(10, 100, 40, 10); // Quantidade
-  doc.text("Quantidade", 30, 105, { align: "center" });
-  
-  doc.rect(50, 100, 90, 10); // Produto
-  doc.text("Produto", 95, 105, { align: "center" });
-  
-  doc.rect(140, 100, 30, 10); // Preço Unitário
-  doc.text("Preço Unitário", 155, 105, { align: "center" });
-  
-  doc.rect(170, 100, 30, 10); // Total
-  doc.text("Total", 185, 105, { align: "center" });
-  
-  // Itens da tabela
-  let y = 110;
+  doc.setFont(undefined, 'normal');
   let totalGeral = 0;
-  
+
+  const alturaMax = 250; // limite antes de quebrar
   pedido.itens.forEach(item => {
     const totalItem = item.quantidade * item.preco;
     totalGeral += totalItem;
-    
-    doc.setFont(undefined, 'normal');
-    
-    // Quantidade
+
+    // Se passar do limite, cria nova página
+    if (y > alturaMax) {
+      doc.addPage();
+      desenharBorda(); // redesenha a borda
+      y = 20; // espaço inicial na nova página
+
+      // Apenas redesenha a tabela
+      desenharCabecalhoTabela(y);
+      y += 10;
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'normal');
+    }
+
+    // Linha do item
     doc.rect(10, y, 40, 10);
-    doc.text(item.quantidade.toString(), 30, y + 5, { align: "center" });
-    
-    // Produto
+    doc.text(String(item.quantidade), 30, y + 7, { align: "center" });
+
     doc.rect(50, y, 90, 10);
-    // Truncar nome do produto se for muito longo
-    const produto = item.produto.length > 30 ? item.produto.substring(0, 27) + "..." : item.produto;
-    doc.text(produto, 55, y + 5);
-    
-    // Preço Unitário
+    let nome = item.produto.length > 35 ? item.produto.substring(0, 32) + "..." : item.produto;
+    doc.text(nome, 52, y + 7);
+
     doc.rect(140, y, 30, 10);
-    doc.text(`R$ ${item.preco.toFixed(2)}`, 155, y + 5, { align: "center" });
-    
-    // Total
+    doc.text(`R$ ${item.preco.toFixed(2)}`, 155, y + 7, { align: "center" });
+
     doc.rect(170, y, 30, 10);
-    doc.text(`R$ ${totalItem.toFixed(2)}`, 185, y + 5, { align: "center" });
-    
+    doc.text(`R$ ${totalItem.toFixed(2)}`, 185, y + 7, { align: "center" });
+
     y += 10;
   });
-  
-  // Total Geral
+
+  // TOTAL GERAL
+  if (y > alturaMax) {
+    doc.addPage();
+    desenharBorda();
+    y = 20;
+    desenharCabecalhoTabela(y);
+    y += 10;
+  }
   doc.setFont(undefined, 'bold');
   doc.rect(10, y, 160, 10);
-  doc.text("TOTAL GERAL", 85, y + 5, { align: "center" });
-  
+  doc.text("TOTAL GERAL", 90, y + 7, { align: "center" });
   doc.rect(170, y, 30, 10);
-  doc.text(`R$ ${totalGeral.toFixed(2)}`, 185, y + 5, { align: "center" });
-  
-  // Linha acima da assinatura (junta com a linha acima)
-  doc.line(10, y + 15, 200, y + 15);
-  
-  // Assinatura
+  doc.text(`R$ ${totalGeral.toFixed(2)}`, 185, y + 7, { align: "center" });
+
+  // ===== ASSINATURA =====
   y += 20;
+  if (y > alturaMax) {
+    doc.addPage();
+    desenharBorda();
+    y = 20;
+  }
   doc.setFontSize(12);
   doc.setFont(undefined, 'bold');
-  doc.text("ASSINATURA", 105, y + 5, { align: "center" });
-  
-  // Linha abaixo do cabeçalho da assinatura (junta com a linha acima)
-  doc.line(10, y + 8, 200, y + 8);
-  
-  doc.setFontSize(10);
+  doc.setFillColor(230, 230, 230);
+  doc.rect(11, y, 188, 8, "F");
+  doc.text("ASSINATURA", 105, y + 6, { align: "center" });
+
+  y += 12;
+  doc.rect(10, y, 190, 30);
   doc.setFont(undefined, 'normal');
-  doc.text("Ass: ___________________________________", 15, y + 25);
-  
-  // Salvar ou abrir o PDF
+  doc.text("Ass: ___________________________________", 12, y + 20);
+
+  // Baixar ou retornar
   if (download) {
     doc.save(`pedido_${pedido.numero}.pdf`);
   }
-  
   return doc;
 }
 
@@ -1422,7 +1452,7 @@ function toggleCollapsible(sectionId) {
   }
 }
 
-// Função para processar produtos colados
+// Função para processar produtos colados - VERSÃO CORRIGIDA
 function processarProdutosColados() {
   if (!pedidoAtivo) {
     mostrarNotificacao('Inicie um pedido primeiro', 'error');
@@ -1456,21 +1486,35 @@ function processarProdutosColados() {
       continue;
     }
     
-    // A última parte deve ser o preço
-    const preco = parseFloat(partes[partes.length - 1]);
-    if (isNaN(preco) || preco < 0) {
+    // Procurar pela próxima parte que começa com "v" (que será o preço)
+    let j = i + 1;
+    let precoIndex = -1;
+    
+    while (j < partes.length) {
+      if (partes[j].startsWith('v') && !isNaN(parseFloat(partes[j].substring(1).replace(',', '.')))) {
+        precoIndex = j;
+        break;
+      }
+      j++;
+    }
+    
+    if (precoIndex === -1) {
       erros++;
       break;
     }
     
-    // Tudo entre a primeira e a última parte é o nome do produto
+    // A parte no índice precoIndex deve ser o preço
+    const preco = parseFloat(partes[precoIndex].substring(1).replace(',', '.'));
+    if (isNaN(preco) || preco < 0) {
+      erros++;
+      i = precoIndex + 1;
+      continue;
+    }
+    
+    // Tudo entre i+1 e precoIndex-1 é o nome do produto
     const nomeParts = [];
-    for (let j = i + 1; j < partes.length - 1; j++) {
-      // Verificar se é um número (poderia ser o próximo produto)
-      if (!isNaN(parseFloat(partes[j]))) {
-        break;
-      }
-      nomeParts.push(partes[j]);
+    for (let k = i + 1; k < precoIndex; k++) {
+      nomeParts.push(partes[k]);
     }
     
     const produto = nomeParts.join(' ');
@@ -1483,8 +1527,8 @@ function processarProdutosColados() {
       });
       produtosAdicionados++;
       
-      // Avançar o índice para o próximo produto
-      i += 1 + nomeParts.length + 1;
+      // Avançar para o próximo produto (após o preço)
+      i = precoIndex + 1;
     } else {
       erros++;
       i++;
@@ -1496,6 +1540,9 @@ function processarProdutosColados() {
     salvar();
     document.getElementById('produtosParaColar').value = '';
     mostrarNotificacao(`${produtosAdicionados} produto(s) adicionado(s) com sucesso!${erros > 0 ? ` ${erros} erro(s) encontrado(s).` : ''}`);
+    
+    // Recolher a seção de colar após processar
+    toggleCollapsible('pasteSection');
   } else if (erros > 0) {
     mostrarNotificacao('Nenhum produto válido encontrado. Verifique o formato.', 'error');
   }
